@@ -1,0 +1,6 @@
+deps
+*.patch
+*.txt
+*.json
+*.log
+*.old
