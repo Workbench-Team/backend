@@ -23,9 +23,9 @@ donation_new( body_json["payment"]["total"]["amount"], body_json["payment"]["tot
 return { code = 200, {"Server", "Natsuki bot"}, {"Content-Type", "text/plain"}, {"Content-Length", 12}, }, "Hello World\n"
 end)]]
 
-http_backend_register('qiwi/create_oplata', function(http_json)
+http_backend_register('qiwi/create_payment', function(http_json)
 	if not http_json.amount or not http_json.id or not http_json.billid then return http_responce_ok_json("Not enough parameters\n") end
-	local expirationDateTime
+	local expirationDateTime = os.time() + 60*60*24*30
 	local data = {
 		['amount'] = {
 			['value'] = http_json.amount,
@@ -49,7 +49,15 @@ http_backend_register('qiwi/create_oplata', function(http_json)
 		headers = {
 			['Content-Type'] = 'application/json',
 			['Accept'] = 'application/json',
-			['Authorization'] = config.get('qiwi_secret_key')
+			['Authorization'] = 'Bearer '..config.get('qiwi_secret_key')
 		}
 	}
+	local req = http.request(options, function(res)
+		local buffer = {}
+		res:on('data', function(chunk)
+			p('#data', chunk)
+			table.insert(buffer, chunk)
+		end)
+	end)
+	req:done()
 end)
