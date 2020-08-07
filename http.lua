@@ -1,5 +1,6 @@
 _G.core = require("core")
 _G.http = require('http')
+_G.https = require('https')
 _G.json = require('json')
 _G.config = require('./config')
 
@@ -79,4 +80,4 @@ http.createServer(onRequest):listen(listen_port)
 require('modules/exec')
 require('modules/accounts_link')
 require('modules/privileges')
---require('modules/qiwidonate')
+require('modules/qiwidonate')
