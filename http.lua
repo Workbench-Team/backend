@@ -3,6 +3,7 @@ _G.http = require('http')
 _G.https = require('https')
 _G.json = require('json')
 _G.config = require('./config')
+_G.corohttp = require('coro-http')
 
 local Emitter = core.Emitter 
 local listen_ip = config.get("listen_ip")
@@ -17,7 +18,7 @@ _G.http_response_error_json = function (res, err_str)
 --	res:setHeader("Content-Type", "application/json")
 --	res:setHeader("Content-Length", #json_str)
 	res:write(err_str)
---	res:finish()
+--	res:finish(err_str)
 end
 
 _G.http_response_ok_json = function (res, data)
@@ -25,7 +26,7 @@ _G.http_response_ok_json = function (res, data)
 --	res:setHeader("Content-Type", "application/json")
 --	res:setHeader("Content-Length", #json_str)
 	res:write(json_str)
---	res:finish()
+--	res:finish(json_str)
 end
 
 local function http_is_api_token(str_token)

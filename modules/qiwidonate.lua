@@ -1,11 +1,11 @@
 local qiwi_hook_id = config["qiwi_hook_id"]
 
-local http_callback = nil;
+--local http_callback = nil;
 
-http_backend_register('qiwi/set_callback', function (http_json)
-	local server = http_json.callback
-	return http_response_ok_json("ok")
-end)
+--http_backend_register('qiwi/set_callback', function (http_json)
+--	local server = http_json.callback
+--	return http_response_ok_json("ok")
+--end)
 
 --[[http.createServer("0.0.0.0", 4080, function (head, body)
 p(body)
@@ -43,7 +43,7 @@ http_backend_register('qiwi/create_payment', function(res, http_json)
 		data['customFields']['themeCode'] = themeCode
 	end
 	local json_data = json.encode(data)
-	p(json_data)
+--	p(json_data)
 	local options = {
 		host = 'api.qiwi.com',
 		port = 443,
@@ -67,14 +67,19 @@ http_backend_register('qiwi/create_payment', function(res, http_json)
 			local error_str = json.encode(error)
 			http_response_error_json(res, string.format('Error has occurred: { %s }', error_str))
 		end)
-		res:on('end', function()
+		return res:on('end', function()
 			response_data = json.decode(buffer[1])
-			if response_data.payUrl and response_data.billId then
-				return http_response_ok_json(res, response_data.payUrl)
-			else
-				return http_response_error_json(res, json.encode(response_data))
-			end
+			return response_data
 		end)
 	end)
-	req:done(json_data)
+	return req:done(json_data, function()
+		p(response_data)
+		if not response_data == nil then
+			return http_response_ok_json(res, response_data.payUrl)
+		else
+--			return http_response_error_json(res, json.encode(response_data))
+			return http_response_error_json(res, 'error')
+		end
+	end)
+--	return http_response_ok_json(res, json_data)
 end)
