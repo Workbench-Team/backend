@@ -71,7 +71,7 @@ req:on('end', function ()
 
 	if not http_is_api_token(body_json.token) then http_response_error_json(res, "Bad token") return end
 
-	if http_emitter:listeners(req.url)[1] ~= nil then http_emitter:listeners(req.url)[1](res, body_json) else http_response_error_json(res, "No handlers for this path") end
+	if http_emitter:listeners(req.url)[1] ~= nil then coroutine.wrap(http_emitter:listeners(req.url)[1](res, body_json)) else http_response_error_json(res, "No handlers for this path") end
 	res:finish()
 end)
 end
